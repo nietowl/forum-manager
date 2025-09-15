@@ -635,9 +635,35 @@
                 return;
             }
             
+            if (!token.startsWith('ghp_')) {
+                messageDiv.innerHTML = '<div style="color: var(--danger-color); padding: 10px; background: rgba(220, 53, 69, 0.1); border-radius: 8px;">❌ Invalid token format. GitHub tokens should start with "ghp_"</div>';
+                return;
+            }
+            
             try {
-                updateSyncStatus('syncing', 'Creating...');
-                messageDiv.innerHTML = '';
+                updateSyncStatus('syncing', 'Testing token...');
+                messageDiv.innerHTML = '<div style="color: var(--warning-color); padding: 10px; background: rgba(255, 193, 7, 0.1); border-radius: 8px;">🔄 Testing GitHub token...</div>';
+                
+                // First test if the token works by trying to list gists
+                const testResponse = await fetch('https://api.github.com/gists', {
+                    headers: {
+                        'Authorization': `token ${token}`,
+                        'Accept': 'application/vnd.github.v3+json'
+                    }
+                });
+                
+                if (!testResponse.ok) {
+                    if (testResponse.status === 401) {
+                        throw new Error('Invalid GitHub token. Please check your token and permissions.');
+                    } else if (testResponse.status === 403) {
+                        throw new Error('GitHub API rate limit exceeded or insufficient permissions. Make sure your token has "gist" permission.');
+                    } else {
+                        throw new Error(`GitHub API error: ${testResponse.status}. Please try again later.`);
+                    }
+                }
+                
+                updateSyncStatus('syncing', 'Creating gist...');
+                messageDiv.innerHTML = '<div style="color: var(--warning-color); padding: 10px; background: rgba(255, 193, 7, 0.1); border-radius: 8px;">🔄 Creating private gist...</div>';
                 
                 githubToken = token;
                 localStorage.setItem('githubToken', token);
@@ -652,16 +678,33 @@
                 
                 messageDiv.innerHTML = `
                     <div style="color: var(--success-color); padding: 15px; background: rgba(40, 167, 69, 0.1); border-radius: 8px;">
-                        ✅ Cloud sync enabled! Your Gist ID: <strong>${gistId}</strong>
-                        <br><small>Save this ID to connect from other devices</small>
-                        <br><a href="https://gist.github.com/${gistId}" target="_blank" style="color: var(--success-color);">View your data on GitHub →</a>
+                        ✅ <strong>Cloud sync enabled successfully!</strong>
+                        <br><br><strong>Your Gist ID:</strong> <code style="background: rgba(0,0,0,0.1); padding: 2px 6px; border-radius: 4px; font-family: monospace;">${gistId}</code>
+                        <br><small>💾 Save this ID to connect from other devices</small>
+                        <br><br><a href="https://gist.github.com/${gistId}" target="_blank" style="color: var(--success-color); text-decoration: underline;">🔗 View your data on GitHub</a>
                     </div>
                 `;
                 
             } catch (error) {
                 console.error('Error enabling cloud sync:', error);
                 updateSyncStatus('local', 'Setup Failed');
-                messageDiv.innerHTML = `<div style="color: var(--danger-color); padding: 10px; background: rgba(220, 53, 69, 0.1); border-radius: 8px;">❌ Setup failed: ${error.message}</div>`;
+                
+                let errorMessage = error.message;
+                if (error.message.includes('fetch')) {
+                    errorMessage = 'Network error. Please check your internet connection and try again.';
+                }
+                
+                messageDiv.innerHTML = `
+                    <div style="color: var(--danger-color); padding: 15px; background: rgba(220, 53, 69, 0.1); border-radius: 8px;">
+                        ❌ <strong>Setup failed:</strong> ${errorMessage}
+                        <br><br><strong>Troubleshooting steps:</strong>
+                        <br>1. Check your GitHub token starts with "ghp_"
+                        <br>2. Ensure token has "gist" permission
+                        <br>3. Try refreshing the page and trying again
+                        <br>4. Check your internet connection
+                        <br><br><a href="https://github.com/settings/tokens/new" target="_blank" style="color: var(--danger-color); text-decoration: underline;">🔧 Create new GitHub token</a>
+                    </div>
+                `;
             }
         }
         
