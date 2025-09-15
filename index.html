@@ -1011,6 +1011,11 @@
         
         function saveForums() {
             localStorage.setItem('forums', JSON.stringify(forums));
+            
+            // Sync to cloud if connected
+            if (isConnected) {
+                syncToCloud();
+            }
         }
         
         function renderForums() {
