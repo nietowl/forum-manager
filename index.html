@@ -573,34 +573,95 @@
             statusEl.querySelector('span').textContent = message;
         }
         
-        async function enableCloudSync() {
+        async function connectToExistingGist() {
             const token = document.getElementById('githubToken').value.trim();
+            const existingGistId = document.getElementById('existingGistId').value.trim();
+            const messageDiv = document.getElementById('setupMessage');
             
             if (!token) {
-                alert('Please enter a GitHub token to enable cloud sync');
+                messageDiv.innerHTML = '<div style="color: var(--danger-color); padding: 10px; background: rgba(220, 53, 69, 0.1); border-radius: 8px;">Please enter your GitHub token first</div>';
+                return;
+            }
+            
+            if (!existingGistId) {
+                messageDiv.innerHTML = '<div style="color: var(--danger-color); padding: 10px; background: rgba(220, 53, 69, 0.1); border-radius: 8px;">Please enter your Gist ID</div>';
                 return;
             }
             
             try {
-                updateSyncStatus('syncing', 'Setting up...');
+                updateSyncStatus('syncing', 'Connecting...');
+                messageDiv.innerHTML = '';
                 
                 githubToken = token;
-                localStorage.setItem('githubToken', token);
+                gistId = existingGistId;
                 
-                // Try to load existing gist or create new one
-                if (!gistId) {
-                    await createGist();
+                // Test if we can access the gist
+                const response = await fetch(`https://api.github.com/gists/${gistId}`, {
+                    headers: {
+                        'Authorization': `token ${githubToken}`
+                    }
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`Cannot access gist. Check your token and Gist ID. Status: ${response.status}`);
                 }
+                
+                // Save credentials
+                localStorage.setItem('githubToken', token);
+                localStorage.setItem('gistId', gistId);
                 
                 isCloudSyncEnabled = true;
                 document.getElementById('githubInfo').style.display = 'none';
                 
+                // Load data from the gist
                 await loadFromCloud();
                 updateSyncStatus('connected', `Cloud Synced • ${forums.length} forums`);
                 
+                messageDiv.innerHTML = '<div style="color: var(--success-color); padding: 10px; background: rgba(40, 167, 69, 0.1); border-radius: 8px;">✅ Successfully connected to your existing forum data!</div>';
+                
+            } catch (error) {
+                console.error('Error connecting to existing gist:', error);
+                updateSyncStatus('local', 'Connection Failed');
+                messageDiv.innerHTML = `<div style="color: var(--danger-color); padding: 10px; background: rgba(220, 53, 69, 0.1); border-radius: 8px;">❌ ${error.message}</div>`;
+            }
+        }
+        
+        async function enableCloudSync() {
+            const token = document.getElementById('githubToken').value.trim();
+            const messageDiv = document.getElementById('setupMessage');
+            
+            if (!token) {
+                messageDiv.innerHTML = '<div style="color: var(--danger-color); padding: 10px; background: rgba(220, 53, 69, 0.1); border-radius: 8px;">Please enter a GitHub token to enable cloud sync</div>';
+                return;
+            }
+            
+            try {
+                updateSyncStatus('syncing', 'Creating...');
+                messageDiv.innerHTML = '';
+                
+                githubToken = token;
+                localStorage.setItem('githubToken', token);
+                
+                // Create new gist
+                await createGist();
+                
+                isCloudSyncEnabled = true;
+                document.getElementById('githubInfo').style.display = 'none';
+                
+                updateSyncStatus('connected', `Cloud Synced • ${forums.length} forums`);
+                
+                messageDiv.innerHTML = `
+                    <div style="color: var(--success-color); padding: 15px; background: rgba(40, 167, 69, 0.1); border-radius: 8px;">
+                        ✅ Cloud sync enabled! Your Gist ID: <strong>${gistId}</strong>
+                        <br><small>Save this ID to connect from other devices</small>
+                        <br><a href="https://gist.github.com/${gistId}" target="_blank" style="color: var(--success-color);">View your data on GitHub →</a>
+                    </div>
+                `;
+                
             } catch (error) {
                 console.error('Error enabling cloud sync:', error);
-                updateSyncStatus('local', 'Sync Failed - Local Only');
+                updateSyncStatus('local', 'Setup Failed');
+                messageDiv.innerHTML = `<div style="color: var(--danger-color); padding: 10px; background: rgba(220, 53, 69, 0.1); border-radius: 8px;">❌ Setup failed: ${error.message}</div>`;
             }
         }
         
