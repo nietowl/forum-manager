@@ -43,25 +43,6 @@
             transition: all 0.3s ease;
         }
         
-        .login-container {
-            max-width: 450px;
-            margin: 50px auto;
-            background: var(--card-bg);
-            backdrop-filter: blur(20px);
-            border-radius: 20px;
-            padding: 40px;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
-            text-align: center;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-        
-        .login-title {
-            color: var(--text-primary);
-            margin-bottom: 30px;
-            font-size: 2.2rem;
-            font-weight: 700;
-        }
-        
         .container {
             max-width: 1200px;
             margin: 0 auto;
@@ -70,26 +51,13 @@
             border-radius: 20px;
             padding: 30px;
             box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
-            display: none;
             border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-        
-        .container.authenticated {
-            display: block;
-            animation: fadeIn 0.5s ease-in;
+            animation: fadeIn 0.8s ease-in;
         }
         
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
+            from { opacity: 0; transform: translateY(30px); }
             to { opacity: 1; transform: translateY(0); }
-        }
-        
-        h1 {
-            text-align: center;
-            color: var(--text-primary);
-            margin-bottom: 30px;
-            font-size: 2.5rem;
-            font-weight: 700;
         }
         
         .header-controls {
@@ -101,9 +69,13 @@
             border-bottom: 2px solid var(--border-color);
         }
         
-        .controls-group {
-            display: flex;
-            gap: 10px;
+        h1 {
+            color: var(--text-primary);
+            font-size: 2.5rem;
+            font-weight: 700;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
         
         .theme-toggle {
@@ -125,20 +97,47 @@
             box-shadow: 0 8px 20px rgba(52, 152, 219, 0.3);
         }
         
-        .logout-btn {
-            background: var(--danger-color);
-            color: white;
-            border: none;
-            padding: 12px 16px;
-            border-radius: 10px;
-            cursor: pointer;
-            font-weight: 600;
+        .sync-section {
+            background: linear-gradient(135deg, rgba(33, 150, 243, 0.1), rgba(33, 203, 243, 0.1));
+            padding: 25px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            border-left: 4px solid var(--info-color);
+            backdrop-filter: blur(10px);
+        }
+        
+        .sync-status {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+        
+        .status-indicator {
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            background: #ccc;
             transition: all 0.3s ease;
         }
         
-        .logout-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(231, 76, 60, 0.3);
+        .status-indicator.connected {
+            background: var(--success-color);
+            animation: pulse 2s infinite;
+            box-shadow: 0 0 20px var(--success-color);
+        }
+        
+        @keyframes pulse {
+            0% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.7; transform: scale(1.1); }
+            100% { opacity: 1; transform: scale(1); }
+        }
+        
+        .github-setup {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 20px;
+            align-items: end;
         }
         
         .add-form {
@@ -207,6 +206,17 @@
             box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
         }
         
+        .btn-secondary {
+            background: linear-gradient(45deg, #2196f3, #21cbf3);
+            color: white;
+            box-shadow: 0 4px 15px rgba(33, 150, 243, 0.3);
+        }
+        
+        .btn-secondary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(33, 150, 243, 0.4);
+        }
+        
         .btn-danger {
             background: linear-gradient(45deg, #ff6b6b, #ee5a24);
             color: white;
@@ -238,6 +248,22 @@
             overflow: hidden;
         }
         
+        .forum-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+            transform: translateX(-100%);
+            transition: transform 0.6s ease;
+        }
+        
+        .forum-card:hover::before {
+            transform: translateX(100%);
+        }
+        
         .forum-card:hover {
             transform: translateY(-8px);
             box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
@@ -253,6 +279,10 @@
         
         .forum-card.maintenance {
             border-left-color: var(--warning-color);
+        }
+        
+        .forum-card.checking {
+            border-left-color: var(--text-secondary);
         }
         
         .forum-name {
@@ -309,6 +339,12 @@
             border: 1px solid rgba(255, 193, 7, 0.3);
         }
         
+        .status-checking {
+            background: linear-gradient(45deg, rgba(108, 117, 125, 0.15), rgba(108, 117, 125, 0.25));
+            color: var(--text-secondary);
+            border: 1px solid rgba(108, 117, 125, 0.3);
+        }
+        
         .forum-actions {
             margin-top: 20px;
             display: flex;
@@ -316,9 +352,25 @@
             align-items: center;
         }
         
+        .check-status-btn {
+            background: linear-gradient(45deg, #17a2b8, #138496);
+            color: white;
+            padding: 8px 14px;
+            font-size: 12px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .check-status-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(23, 162, 184, 0.4);
+        }
+        
         .stats {
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
+            grid-template-columns: repeat(4, 1fr);
             gap: 25px;
             margin-bottom: 30px;
         }
@@ -330,6 +382,23 @@
             text-align: center;
             box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
             transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+            transition: left 0.5s ease;
+        }
+        
+        .stat-card:hover::before {
+            left: 100%;
         }
         
         .stat-card:hover {
@@ -341,11 +410,13 @@
             font-size: 2.5rem;
             font-weight: 800;
             margin-bottom: 8px;
+            position: relative;
         }
         
         .stat-active { color: var(--success-color); }
         .stat-inactive { color: var(--danger-color); }
         .stat-maintenance { color: var(--warning-color); }
+        .stat-checking { color: var(--text-secondary); }
         
         .stat-label {
             color: var(--text-secondary);
@@ -355,24 +426,21 @@
             letter-spacing: 0.5px;
         }
         
-        .error-message {
-            color: var(--danger-color);
+        .last-sync {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
             margin-top: 15px;
-            font-size: 0.9rem;
-            padding: 10px;
-            background: rgba(220, 53, 69, 0.1);
-            border-radius: 8px;
-            border: 1px solid rgba(220, 53, 69, 0.2);
+            font-style: italic;
         }
         
         @media (max-width: 768px) {
-            .form-row {
+            .form-row, .github-setup {
                 grid-template-columns: 1fr;
                 gap: 15px;
             }
             
             .stats {
-                grid-template-columns: 1fr;
+                grid-template-columns: repeat(2, 1fr);
             }
             
             .header-controls {
@@ -389,37 +457,49 @@
                 font-size: 2rem;
             }
         }
+
+        @media (max-width: 480px) {
+            body {
+                padding: 10px;
+            }
+            
+            .container {
+                padding: 20px;
+            }
+            
+            .stats {
+                grid-template-columns: 1fr;
+            }
+        }
     </style>
 </head>
 <body>
-    <!-- Login Screen -->
-    <div class="login-container" id="loginContainer">
-        <h2 class="login-title">🔒 Private Forum Manager</h2>
-        <div class="form-group">
-            <label for="passwordInput">Enter Password</label>
-            <input type="password" id="passwordInput" placeholder="Your secure password">
-            <div class="error-message" id="loginError" style="display: none;"></div>
-        </div>
-        <button type="button" class="btn-primary" id="loginBtn">
-            Login
-        </button>
-        <div style="margin-top: 25px; padding: 15px; background: rgba(255,193,7,0.1); border-radius: 10px; font-size: 0.9rem; color: var(--text-secondary);">
-            <strong>Default password:</strong> <code style="background: rgba(0,0,0,0.1); padding: 2px 6px; border-radius: 4px;">myForums2024</code><br>
-            <small>⚠️ Change this in the code before deploying!</small>
-        </div>
-    </div>
-
-    <!-- Main Dashboard -->
-    <div class="container" id="mainContainer">
+    <div class="container">
         <div class="header-controls">
             <h1>🌐 Forum Management Dashboard</h1>
-            <div class="controls-group">
-                <button class="theme-toggle" id="themeToggle">
-                    <span id="themeIcon">🌙</span>
-                    <span id="themeText">Dark Mode</span>
-                </button>
-                <button class="logout-btn" id="logoutBtn">🚪 Logout</button>
+            <button class="theme-toggle" id="themeToggle">
+                <span id="themeIcon">🌙</span>
+                <span id="themeText">Dark Mode</span>
+            </button>
+        </div>
+        
+        <div class="sync-section">
+            <div class="sync-status">
+                <div class="status-indicator" id="syncIndicator"></div>
+                <span id="syncStatus">Local Storage Only</span>
             </div>
+            <div class="github-setup">
+                <div class="form-group">
+                    <label for="githubToken">GitHub Personal Access Token (Optional - for cloud sync)</label>
+                    <input type="password" id="githubToken" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx">
+                    <small style="color: var(--text-secondary); margin-top: 5px;">
+                        Create at: GitHub Settings → Developer settings → Personal access tokens → Fine-grained tokens
+                        <br>Permissions needed: Gist (read/write)
+                    </small>
+                </div>
+                <button type="button" class="btn-secondary" id="setupCloudSync">⚡ Setup Cloud Sync</button>
+            </div>
+            <div class="last-sync" id="lastSync"></div>
         </div>
         
         <div class="stats">
@@ -434,6 +514,10 @@
             <div class="stat-card">
                 <div class="stat-number stat-maintenance" id="maintenanceCount">0</div>
                 <div class="stat-label">Under Maintenance</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number stat-checking" id="checkingCount">0</div>
+                <div class="stat-label">Checking Status</div>
             </div>
         </div>
         
@@ -467,100 +551,176 @@
     </div>
 
     <script>
-        // Configuration - CHANGE THE PASSWORD HERE!
-        const MASTER_PASSWORD = 'myForums2024';
-        
         let forums = JSON.parse(localStorage.getItem('forums')) || [];
+        let githubToken = localStorage.getItem('githubToken') || '';
+        let gistId = localStorage.getItem('gistId') || '';
+        let isCloudSyncEnabled = false;
         let currentTheme = localStorage.getItem('theme') || 'light';
         
         // Initialize app
         document.addEventListener('DOMContentLoaded', function() {
-            console.log('DOM loaded, initializing app...');
             initializeApp();
         });
         
         function initializeApp() {
             applyTheme();
             setupEventListeners();
-            checkAuthentication();
-            if (isAuthenticated()) {
-                showMainApp();
-                renderForums();
-            }
+            loadForums();
+            checkCloudSync();
         }
         
         function setupEventListeners() {
-            // Login button
-            document.getElementById('loginBtn').addEventListener('click', authenticate);
-            
-            // Logout button
-            document.getElementById('logoutBtn').addEventListener('click', logout);
-            
-            // Theme toggle
             document.getElementById('themeToggle').addEventListener('click', toggleTheme);
-            
-            // Add forum button
             document.getElementById('addForumBtn').addEventListener('click', addForum);
+            document.getElementById('setupCloudSync').addEventListener('click', setupCloudSync);
             
             // Enter key handling
             document.addEventListener('keypress', function(e) {
                 if (e.key === 'Enter') {
-                    if (e.target.id === 'passwordInput') {
-                        authenticate();
-                    } else if (e.target.id === 'forumName' || e.target.id === 'forumUrl') {
+                    if (e.target.id === 'forumName' || e.target.id === 'forumUrl') {
                         addForum();
+                    } else if (e.target.id === 'githubToken') {
+                        setupCloudSync();
                     }
                 }
             });
         }
         
-        function checkAuthentication() {
-            const isAuth = sessionStorage.getItem('authenticated') === 'true';
-            if (isAuth) {
-                showMainApp();
+        function checkCloudSync() {
+            if (githubToken && gistId) {
+                isCloudSyncEnabled = true;
+                updateSyncStatus('Connected to GitHub', true);
+                loadFromCloud();
+            } else if (githubToken) {
+                updateSyncStatus('Token set, click Setup Cloud Sync', false);
+                document.getElementById('githubToken').value = githubToken;
             } else {
-                showLogin();
+                updateSyncStatus('Local Storage Only', false);
             }
         }
         
-        function isAuthenticated() {
-            return sessionStorage.getItem('authenticated') === 'true';
-        }
-        
-        function authenticate() {
-            console.log('Authenticate function called');
-            const password = document.getElementById('passwordInput').value;
-            const errorDiv = document.getElementById('loginError');
-            
-            console.log('Expected:', MASTER_PASSWORD);
-            console.log('Entered:', password);
-            
-            if (password === MASTER_PASSWORD) {
-                console.log('Password correct, logging in...');
-                sessionStorage.setItem('authenticated', 'true');
-                showMainApp();
-                errorDiv.style.display = 'none';
+        function updateSyncStatus(message, connected) {
+            document.getElementById('syncStatus').textContent = message;
+            const indicator = document.getElementById('syncIndicator');
+            if (connected) {
+                indicator.classList.add('connected');
             } else {
-                console.log('Password incorrect');
-                errorDiv.textContent = 'Incorrect password. Please try again.';
-                errorDiv.style.display = 'block';
-                document.getElementById('passwordInput').value = '';
+                indicator.classList.remove('connected');
             }
         }
         
-        function logout() {
-            sessionStorage.removeItem('authenticated');
-            showLogin();
+        async function setupCloudSync() {
+            const token = document.getElementById('githubToken').value.trim();
+            if (!token) {
+                alert('Please enter a GitHub token');
+                return;
+            }
+            
+            try {
+                updateSyncStatus('Setting up cloud sync...', false);
+                
+                if (!gistId) {
+                    const gist = await createGist(token);
+                    gistId = gist.id;
+                    localStorage.setItem('gistId', gistId);
+                }
+                
+                githubToken = token;
+                localStorage.setItem('githubToken', token);
+                isCloudSyncEnabled = true;
+                
+                await saveToCloud();
+                updateSyncStatus('Connected to GitHub', true);
+                updateLastSync();
+                
+            } catch (error) {
+                console.error('Cloud sync setup failed:', error);
+                updateSyncStatus('Setup failed: ' + error.message, false);
+            }
         }
         
-        function showLogin() {
-            document.getElementById('loginContainer').style.display = 'block';
-            document.getElementById('mainContainer').classList.remove('authenticated');
+        async function createGist(token) {
+            const response = await fetch('https://api.github.com/gists', {
+                method: 'POST',
+                headers: {
+                    'Authorization': `token ${token}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    description: 'Forum Management Dashboard Data',
+                    public: false,
+                    files: {
+                        'forums.json': {
+                            content: JSON.stringify(forums, null, 2)
+                        }
+                    }
+                })
+            });
+            
+            if (!response.ok) {
+                throw new Error(`Failed to create gist: ${response.status}`);
+            }
+            
+            return response.json();
         }
         
-        function showMainApp() {
-            document.getElementById('loginContainer').style.display = 'none';
-            document.getElementById('mainContainer').classList.add('authenticated');
+        async function saveToCloud() {
+            if (!isCloudSyncEnabled) return;
+            
+            try {
+                const response = await fetch(`https://api.github.com/gists/${gistId}`, {
+                    method: 'PATCH',
+                    headers: {
+                        'Authorization': `token ${githubToken}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        files: {
+                            'forums.json': {
+                                content: JSON.stringify(forums, null, 2)
+                            }
+                        }
+                    })
+                });
+                
+                if (response.ok) {
+                    updateLastSync();
+                }
+            } catch (error) {
+                console.error('Failed to save to cloud:', error);
+            }
+        }
+        
+        async function loadFromCloud() {
+            if (!isCloudSyncEnabled) return;
+            
+            try {
+                const response = await fetch(`https://api.github.com/gists/${gistId}`, {
+                    headers: {
+                        'Authorization': `token ${githubToken}`
+                    }
+                });
+                
+                if (response.ok) {
+                    const gist = await response.json();
+                    const content = gist.files['forums.json'].content;
+                    const cloudForums = JSON.parse(content);
+                    
+                    forums = cloudForums;
+                    saveForums();
+                    renderForums();
+                    updateLastSync();
+                }
+            } catch (error) {
+                console.error('Failed to load from cloud:', error);
+            }
+        }
+        
+        function updateLastSync() {
+            const lastSyncElement = document.getElementById('lastSync');
+            if (lastSyncElement) {
+                lastSyncElement.textContent = `Last synced: ${new Date().toLocaleString()}`;
+            }
         }
         
         function toggleTheme() {
@@ -585,6 +745,18 @@
             }
         }
         
+        function loadForums() {
+            forums = JSON.parse(localStorage.getItem('forums')) || [];
+            renderForums();
+        }
+        
+        function saveForums() {
+            localStorage.setItem('forums', JSON.stringify(forums));
+            if (isCloudSyncEnabled) {
+                saveToCloud();
+            }
+        }
+        
         function addForum() {
             const name = document.getElementById('forumName').value.trim();
             const url = document.getElementById('forumUrl').value.trim();
@@ -600,7 +772,8 @@
                 name: name,
                 url: url,
                 status: status,
-                dateAdded: new Date().toLocaleDateString()
+                dateAdded: new Date().toLocaleDateString(),
+                lastChecked: null
             };
             
             forums.push(forum);
@@ -621,18 +794,43 @@
             }
         }
         
-        function saveForums() {
-            localStorage.setItem('forums', JSON.stringify(forums));
+        async function checkForumStatus(id) {
+            const forum = forums.find(f => f.id === id);
+            if (!forum) return;
+            
+            forum.status = 'checking';
+            renderForums();
+            
+            try {
+                // Using a CORS proxy service to check status
+                const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(forum.url)}`;
+                const response = await fetch(proxyUrl);
+                const data = await response.json();
+                
+                if (data.status.http_code >= 200 && data.status.http_code < 300) {
+                    forum.status = 'active';
+                } else {
+                    forum.status = 'inactive';
+                }
+            } catch (error) {
+                forum.status = 'inactive';
+            }
+            
+            forum.lastChecked = new Date().toLocaleString();
+            saveForums();
+            renderForums();
         }
         
         function updateStats() {
             const active = forums.filter(f => f.status === 'active').length;
             const inactive = forums.filter(f => f.status === 'inactive').length;
             const maintenance = forums.filter(f => f.status === 'maintenance').length;
+            const checking = forums.filter(f => f.status === 'checking').length;
             
             document.getElementById('activeCount').textContent = active;
             document.getElementById('inactiveCount').textContent = inactive;
             document.getElementById('maintenanceCount').textContent = maintenance;
+            document.getElementById('checkingCount').textContent = checking;
         }
         
         function renderForums() {
@@ -650,9 +848,13 @@
                         <span class="status-badge status-${forum.status}">${forum.status}</span>
                         <div style="margin-top: 15px; font-size: 0.8rem; color: var(--text-secondary);">
                             Added: ${forum.dateAdded}
+                            ${forum.lastChecked ? `<br>Last checked: ${forum.lastChecked}` : ''}
                         </div>
                     </div>
                     <div class="forum-actions">
+                        <button class="check-status-btn" onclick="checkForumStatus(${forum.id})">
+                            🔍 Check Status
+                        </button>
                         <button class="btn-danger" onclick="removeForum(${forum.id})">🗑️ Remove</button>
                     </div>
                 `;
@@ -663,8 +865,16 @@
             updateStats();
         }
         
-        // Make removeForum available globally
+        // Make functions available globally
         window.removeForum = removeForum;
+        window.checkForumStatus = checkForumStatus;
+        
+        // Auto-sync every 5 minutes if cloud sync is enabled
+        setInterval(() => {
+            if (isCloudSyncEnabled) {
+                loadFromCloud();
+            }
+        }, 5 * 60 * 1000);
     </script>
 </body>
 </html>
