@@ -801,26 +801,45 @@
             const addForumBtn = document.getElementById('addForumBtn');
             const connectBtn = document.getElementById('connectRoom');
             
+            console.log('addForumBtn:', addForumBtn);
+            console.log('connectBtn:', connectBtn);
+            
             if (addForumBtn) {
-                addForumBtn.addEventListener('click', addForum);
+                addForumBtn.addEventListener('click', function() {
+                    console.log('Add forum button clicked!');
+                    addForum();
+                });
                 console.log('Add forum button listener added');
             } else {
-                console.error('Add forum button not found');
+                console.error('Add forum button not found!');
             }
             
             if (connectBtn) {
-                connectBtn.addEventListener('click', connectToRoom);
+                connectBtn.addEventListener('click', function() {
+                    console.log('Connect button clicked!');
+                    connectToRoom();
+                });
                 console.log('Connect button listener added');
             } else {
-                console.error('Connect button not found');
+                console.error('Connect button not found!');
+            }
+            
+            // Also try direct onclick as backup
+            if (connectBtn) {
+                connectBtn.onclick = function() {
+                    console.log('Connect button onclick triggered!');
+                    connectToRoom();
+                };
             }
             
             // Enter key handling
             document.addEventListener('keypress', function(e) {
+                console.log('Key pressed:', e.key, 'Target:', e.target.id);
                 if (e.key === 'Enter') {
                     if (e.target.id === 'forumName') {
                         addForum();
                     } else if (e.target.id === 'roomId') {
+                        console.log('Enter pressed on roomId');
                         connectToRoom();
                     }
                 }
