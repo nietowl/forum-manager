@@ -796,8 +796,24 @@
         }
         
         function setupEventListeners() {
-            document.getElementById('addForumBtn').addEventListener('click', addForum);
-            document.getElementById('connectRoom').addEventListener('click', connectToRoom);
+            console.log('Setting up event listeners...');
+            
+            const addForumBtn = document.getElementById('addForumBtn');
+            const connectBtn = document.getElementById('connectRoom');
+            
+            if (addForumBtn) {
+                addForumBtn.addEventListener('click', addForum);
+                console.log('Add forum button listener added');
+            } else {
+                console.error('Add forum button not found');
+            }
+            
+            if (connectBtn) {
+                connectBtn.addEventListener('click', connectToRoom);
+                console.log('Connect button listener added');
+            } else {
+                console.error('Connect button not found');
+            }
             
             // Enter key handling
             document.addEventListener('keypress', function(e) {
@@ -809,6 +825,8 @@
                     }
                 }
             });
+            
+            console.log('Event listeners setup complete');
         }
         
         function addUrlInput() {
